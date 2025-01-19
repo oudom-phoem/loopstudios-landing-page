@@ -5,12 +5,18 @@
   "main": "index.js",
   "scripts": {
     "build": "tailwindcss -i ./src/input.css -o ./src/css/style.css",
-    "watch": "tailwindcss -i ./src/input.css -o ./src/css/style.css --watch"
+    "watch": "tailwindcss -i ./src/input.css -o ./src/css/style.css --watch",
+    "start": "concurrently \"npx tailwindcss -i ./src/input.css -o ./src/css/style.css --watch\" \"npm run live\"",
+    "live": "live-server --port=3000"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "live-server": "^1.2.2"
   }
 }
