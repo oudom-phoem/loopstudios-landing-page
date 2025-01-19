@@ -42,13 +42,13 @@ jobs:
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
-          server_port: 465 # Use port 465 for SSL/TLS
-          username: ${{ secrets.EMAIL_USER }} # Use GitHub Secret
-          password: ${{ secrets.EMAIL_PASS }} # Use GitHub Secret
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }} # Your Gmail email address from GitHub Secrets
+          password: ${{ secrets.EMAIL_PASS }} # Your Gmail app password from GitHub Secrets
           subject: "Deployment Successful - GitHub Pages"
           body: |
             Your deployment to GitHub Pages was successful!
             URL: ${{ steps.deployment.outputs.page_url }}
           to: oudomphoem@gmail.com
-          from: ${{ secrets.EMAIL_USER }} # Use GitHub Secret
-          secure: true # Use SSL/TLS
+          from: "My TailwindCSS Project Deployment <${{ secrets.EMAIL_USER }}>" # Valid 'from' email format
+          secure: true
