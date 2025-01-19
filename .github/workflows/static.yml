@@ -54,4 +54,4 @@ jobs:
             The deployment has completed with the following status: ${{ job.status }}.
             Check the deployment URL: ${{ steps.deployment.outputs.page_url }}
           to: oudomphoem@gmail.com # Recipient's email address
-          from: "My TailwindCSS Project Deployment <oudomphoem@gmail.com>" # Sender email address
+          from: "My TailwindCSS Project Deployment <oudomphoem@gmail.com>" # Sender email addres
