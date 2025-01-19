@@ -37,21 +37,18 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  notify:
-    needs: deploy # The "notify" job depends on the "deploy" job
-    runs-on: ubuntu-latest
-    if: always() # Always run this job, whether "deploy" succeeded or failed
-    steps:
-      - name: Send Email Notification # Step: Send an email about the deployment result
+      - name: Send email notification on success
+        if: success()
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.gmail.com # Use Gmail's SMTP server
-          server_port: 465 # Port for secure email sending
-          username: ${{ secrets.EMAIL_USER }} # Email username (stored as a GitHub secret)
-          password: ${{ secrets.EMAIL_PASS }} # Email password (stored as a GitHub secret)
-          subject: "Deployment ${{ job.status }}" # Email subject shows success or failure
-          body: | # Email body with deployment details
-            The deployment has completed with the following status: ${{ job.status }}.
-            Check the deployment URL: ${{ steps.deployment.outputs.page_url }}
-          to: oudomphoem@gmail.com # Recipient's email address
-          from: "My TailwindCSS Project Deployment <oudomphoem@gmail.com>" # Sender email addres
+          server_address: smtp.gmail.com
+          server_port: 465 # Use port 465 for SSL/TLS
+          username: ${{ secrets.EMAIL_USER }} # Use GitHub Secret
+          password: ${{ secrets.EMAIL_PASS }} # Use GitHub Secret
+          subject: "Deployment Successful - GitHub Pages"
+          body: |
+            Your deployment to GitHub Pages was successful!
+            URL: ${{ steps.deployment.outputs.page_url }}
+          to: oudomphoem@gmail.com
+          from: ${{ secrets.EMAIL_USER }} # Use GitHub Secret
+          secure: true # Use SSL/TLS
