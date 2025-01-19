@@ -1,57 +1,57 @@
-# Simple workflow for deploying Tailwind CLI project to GitHub Pages
 name: Deploy Tailwind CSS to Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
+  push: # Trigger the workflow when there is a push to the "main" branch
     branches: ["main"]
+  workflow_dispatch: # Allow manual triggering of the workflow from GitHub Actions
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  contents: read # Read permissions for the repository content
+  pages: write # Write permissions to deploy to GitHub Pages
+  id-token: write # Required for some actions to authenticate securely
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # The environment for running the workflow (Linux-based)
     steps:
-      # Step 1: Checkout the code
-      - name: Checkout
+      - name: Checkout # Step 1: Pull the repository code into the workflow runner
         uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js
-      - name: Setup Node.js
+      - name: Setup Node.js # Step 2: Set up Node.js to run Tailwind CLI
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "16" # Specify Node.js version
 
-      # Step 3: Install Tailwind CLI
-      - name: Install Tailwind CSS CLI
+      - name: Install Tailwind CSS CLI # Step 3: Install the Tailwind CSS CLI globally
         run: npm install -g tailwindcss
 
-      # Step 4: Build the CSS
-      - name: Build Tailwind CSS
+      - name: Build Tailwind CSS # Step 4: Run the build command to generate CSS
         run: npm run build
 
-      # Step 5: Upload artifact (deploy the 'src' folder)
-      - name: Upload artifact
+      - name: Upload artifact # Step 5: Prepare the site for deployment to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./src"
+          path: "./src" # Specify the folder to upload (your static site)
 
-      # Step 6: Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages # Step 6: Deploy the site to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  notify:
+    needs: deploy # The "notify" job depends on the "deploy" job
+    runs-on: ubuntu-latest
+    if: always() # Always run this job, whether "deploy" succeeded or failed
+    steps:
+      - name: Send Email Notification # Step: Send an email about the deployment result
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com # Use Gmail's SMTP server
+          server_port: 465 # Port for secure email sending
+          username: ${{ secrets.EMAIL_USER }} # Email username (stored as a GitHub secret)
+          password: ${{ secrets.EMAIL_PASS }} # Email password (stored as a GitHub secret)
+          subject: "Deployment ${{ job.status }}" # Email subject shows success or failure
+          body: | # Email body with deployment details
+            The deployment has completed with the following status: ${{ job.status }}.
+            Check the deployment URL: ${{ steps.deployment.outputs.page_url }}
+          to: oudomphoem@gmail.com # Recipient's email address
+          from: "My TailwindCSS Project Deployment <oudomphoem@gmail.com>" # Sender email address
